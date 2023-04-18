@@ -13,22 +13,20 @@ import java.time.format.DateTimeFormatter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JButton;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 public class ScreenMain extends javax.swing.JFrame {
 
-	private final String[] tableColumns = {"Nome do Filme", "Data de Lançamento", "Categoria"};
+	private final String[] tableColumns = {"Id","Nome do Filme", "Data de Lançamento", "Categoria"};
 //
-private final DefaultTableModel tableModel = new DefaultTableModel(tableColumns, 0);
+	private final DefaultTableModel tableModel = new DefaultTableModel(tableColumns, 0);
+
+	
 //
-private List<CadastroFilmes> filmesList = new ArrayList<>();
+	private List<CadastroFilmes> filmesList = new ArrayList<>();
 
 	public ScreenMain() {
 
@@ -36,6 +34,7 @@ private List<CadastroFilmes> filmesList = new ArrayList<>();
 		setLocationRelativeTo(null);
 		jtSubTitle_CadastroDeFilmes.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0,
 				  Color.BLACK));
+		ocultarColuna();
 
 		bntAlterar.setEnabled(false);
 		bntExcluir.setEnabled(false);
@@ -256,11 +255,11 @@ private List<CadastroFilmes> filmesList = new ArrayList<>();
 
          },
          new String [] {
-            "Nome do Filme", "Data de Lançamento", "Categoria"
+            "Id", "Nome do Filme", "Data de Lançamento", "Categoria"
          }
       ) {
          Class[] types = new Class [] {
-            java.lang.String.class, java.lang.String.class, java.lang.String.class
+            java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
          };
 
          public Class getColumnClass(int columnIndex) {
@@ -295,10 +294,13 @@ private List<CadastroFilmes> filmesList = new ArrayList<>();
 
    private void bntCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntCadastrarActionPerformed
 
-		if (!validacompos()) {
+		if (!empty()) {
 
-			cadastrar();
+			if (!validacompos()) {
 
+				cadastrar();
+
+			}
 		}
 
    }//GEN-LAST:event_bntCadastrarActionPerformed
@@ -306,7 +308,6 @@ private List<CadastroFilmes> filmesList = new ArrayList<>();
    private void bntLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntLimparActionPerformed
 
 		limparDados();
-
 
    }//GEN-LAST:event_bntLimparActionPerformed
 
@@ -319,7 +320,7 @@ private List<CadastroFilmes> filmesList = new ArrayList<>();
    }//GEN-LAST:event_txtFiltroActionPerformed
 
    private void bntPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntPesquisarActionPerformed
-		
+
 		tableModel.setRowCount(0);
 		dadospesquisa();
 
@@ -410,7 +411,7 @@ private List<CadastroFilmes> filmesList = new ArrayList<>();
 		String dataString = fTxtDataLancamento.getText();
 		SimpleDateFormat formatEntrada = new SimpleDateFormat("dd/MM/yyyy");
 		Date dataFormatada = null;
-		
+
 		try {
 
 			dataFormatada = formatEntrada.parse(dataString);
@@ -426,7 +427,7 @@ private List<CadastroFilmes> filmesList = new ArrayList<>();
 
 		dao = new CadastroFilmesDAO();
 
-		status = dao.conectar(); 
+		status = dao.conectar();
 
 		if (status == false) {
 
@@ -459,25 +460,25 @@ private List<CadastroFilmes> filmesList = new ArrayList<>();
 		boolean status = dao.conectar();
 
 		if (status == true) {
-			
+
 			List<CadastroFilmes> filmesList = dao.consultar(categoria);
 
 			if (filmesList.isEmpty()) {
-				
+
 				JOptionPane.showMessageDialog(null, "Nenhum Filme localizado");
-				
+
 			} else {
-				
+
 				this.filmesList = filmesList;
 				addTabela();
 			}
 
 			dao.desconectar();
-			
+
 		} else {
-			
+
 			JOptionPane.showMessageDialog(null, "Erro de conexão");
-			
+
 		}
 	}
 
@@ -522,35 +523,43 @@ private List<CadastroFilmes> filmesList = new ArrayList<>();
 		//tableModel.setRowCount(0);
 
 		for (CadastroFilmes filme : filmesList) {
-			
-			Object[] data = {filme.getNomeDoFilme(), formatSaida.format(filme.getDataLacamento()), filme.getCategoria()};
+
+			Object[] data = {filme.getId(),filme.getNomeDoFilme(), formatSaida.format(filme.getDataLacamento()), filme.getCategoria()};
 			tableModel.addRow(data);
-			
+
 		}
 
 		jTableFilmes.setModel(tableModel);
 	}
 
-	public ScreenMain(JButton bntAlterar, JButton bntCadastrar, JButton bntExcluir, JButton bntLimpar, JButton bntPesquisar, JFormattedTextField fTxtDataLancamento, JPanel jPanel1, JScrollPane jScrollPane1, JTable jTableFilmes, JLabel jbCategoria, JLabel jbDataDeLancamento, JLabel jbFiltroCategoria, JLabel jbNomeDoFilme, JLabel jlTitle_CenaFlix, JLabel jtSubTitle_CadastroDeFilmes, JTextField txtCategoria, JTextField txtFiltro, JTextField txtNomeFilme) throws HeadlessException {
-		this.bntAlterar = bntAlterar;
-		this.bntCadastrar = bntCadastrar;
-		this.bntExcluir = bntExcluir;
-		this.bntLimpar = bntLimpar;
-		this.bntPesquisar = bntPesquisar;
-		this.fTxtDataLancamento = fTxtDataLancamento;
-		this.jPanel1 = jPanel1;
-		this.jScrollPane1 = jScrollPane1;
-		this.jTableFilmes = jTableFilmes;
-		this.jbCategoria = jbCategoria;
-		this.jbDataDeLancamento = jbDataDeLancamento;
-		this.jbFiltroCategoria = jbFiltroCategoria;
-		this.jbNomeDoFilme = jbNomeDoFilme;
-		this.jlTitle_CenaFlix = jlTitle_CenaFlix;
-		this.jtSubTitle_CadastroDeFilmes = jtSubTitle_CadastroDeFilmes;
-		this.txtCategoria = txtCategoria;
-		this.txtFiltro = txtFiltro;
-		this.txtNomeFilme = txtNomeFilme;
+	public boolean empty() {
+
+		boolean empty = true;
+
+		if (txtNomeFilme.getText().isEmpty()) {
+
+			JOptionPane.showMessageDialog(null, "Informe o Nome do filme!");
+
+		} else if (txtCategoria.getText().isEmpty()) {
+
+			JOptionPane.showMessageDialog(null, "Informe a Categoria do filme");
+
+		} else {
+
+			empty = false;
+
+		}
+
+		return empty;
+
 	}
-	
-	
+
+	public void ocultarColuna() {
+		TableColumnModel modeloColuna = jTableFilmes.getColumnModel();
+		TableColumn colunaInvisivel = modeloColuna.getColumn(0); 
+
+		
+		colunaInvisivel.setMinWidth(0); 
+		colunaInvisivel.setMaxWidth(1);
+	}
 }

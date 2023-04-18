@@ -51,7 +51,7 @@ public class CadastroFilmesDAO {
 		int status;
 
 		try {
-			
+
 			st = conn.prepareStatement("INSERT INTO filmes  (nome, datalancamento, categoria) VALUES(?,?,?)");
 			st.setString(1, cadastroFilmes.getNomeDoFilme());
 			st.setDate(2, new java.sql.Date(cadastroFilmes.getDataLacamento().getTime()));
@@ -69,34 +69,35 @@ public class CadastroFilmesDAO {
 	}
 
 	public List<CadastroFilmes> consultar(String categoria) {
-		
+
 		List<CadastroFilmes> filmesList = new ArrayList<>();
 
 		try {
-			
+
 			st = conn.prepareStatement("SELECT * from filmes WHERE categoria LIKE ?");
 			st.setString(1, "%" + categoria + "%");
 			rs = st.executeQuery();
 
 			while (rs.next()) {
-				
+
 				CadastroFilmes cadastroFilmes = new CadastroFilmes();
 				
+				cadastroFilmes.setId(rs.getInt("id"));
 				cadastroFilmes.setNomeDoFilme(rs.getString("nome"));
 				cadastroFilmes.setCategoria(rs.getString("categoria"));
-				
+
 				SimpleDateFormat formatEntrada = new SimpleDateFormat("yyyy-MM-dd");
 				Date dataLancamento = formatEntrada.parse(rs.getString("datalancamento"));
 				cadastroFilmes.setDataLacamento(dataLancamento);
-				
+
 				filmesList.add(cadastroFilmes);
-				
+
 			}
-			
+
 		} catch (SQLException | ParseException ex) {
-			
+
 			System.out.println("Erro ao pesquisar: " + ex.getMessage());
-			
+
 		}
 
 		return filmesList;
