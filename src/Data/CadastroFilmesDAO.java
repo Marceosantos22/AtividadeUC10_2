@@ -1,4 +1,3 @@
-//Concluído enviado Git
 package Data;
 
 import java.sql.DriverManager;
@@ -68,39 +67,94 @@ public class CadastroFilmesDAO {
 		}
 	}
 
-	public List<CadastroFilmes> consultar(String categoria) {
+	public List<CadastroFilmes> listTable(String Categoria) {
 
-		List<CadastroFilmes> filmesList = new ArrayList<>();
+		String sql = "SELECT * FROM filmes";
+
+		if (!Categoria.isEmpty()) {
+
+			sql = sql + " WHERE categoria LIKE ? ";
+
+		}
 
 		try {
 
-			st = conn.prepareStatement("SELECT * from filmes WHERE categoria LIKE ?");
-			st.setString(1, "%" + categoria + "%");
+			st = conn.prepareStatement(sql);
+
+			if (!Categoria.isEmpty()) {
+
+				st.setString(1, "%" + Categoria + "%");
+			}
+
 			rs = st.executeQuery();
+
+			List<CadastroFilmes> lista = new ArrayList<>();
 
 			while (rs.next()) {
 
-				CadastroFilmes cadastroFilmes = new CadastroFilmes();
-				
-				cadastroFilmes.setId(rs.getInt("id"));
-				cadastroFilmes.setNomeDoFilme(rs.getString("nome"));
-				cadastroFilmes.setCategoria(rs.getString("categoria"));
+				CadastroFilmes filmes = new CadastroFilmes();
+
+				filmes.setId(rs.getInt("id"));
+				filmes.setNomeDoFilme(rs.getString("nome"));
+				filmes.setCategoria(rs.getString("categoria"));
 
 				SimpleDateFormat formatEntrada = new SimpleDateFormat("yyyy-MM-dd");
 				Date dataLancamento = formatEntrada.parse(rs.getString("datalancamento"));
-				cadastroFilmes.setDataLacamento(dataLancamento);
+				filmes.setDataLacamento(dataLancamento);
 
-				filmesList.add(cadastroFilmes);
-
+				lista.add(filmes);
 			}
+
+			return lista;
 
 		} catch (SQLException | ParseException ex) {
 
 			System.out.println("Erro ao pesquisar: " + ex.getMessage());
 
+			return null;
 		}
 
-		return filmesList;
 	}
 
+	public boolean excluir(int id) {
+
+		try {
+
+			st = conn.prepareStatement("DELETE FROM filmes WHERE id = ?");
+			st.setInt(1, id);
+			st.executeUpdate();
+
+			return true;
+
+		} catch (SQLException ex) {
+
+			return false;
+
+		}
+
+	}
+
+	public int atualizar(CadastroFilmes cadastroFilmes) {
+		
+		int status;
+		
+		try {
+			
+			st = conn.prepareStatement("UPDATE filmes SET nome = ?, datalancamento = ?, categoria = ? WHERE id = ?");
+			st.setString(1, cadastroFilmes.getNomeDoFilme());
+			st.setDate(2, new java.sql.Date(cadastroFilmes.getDataLacamento().getTime()));
+			st.setString(3, cadastroFilmes.getCategoria());
+			st.setInt(4, cadastroFilmes.getId());
+
+			status = st.executeUpdate();
+
+			return status;
+			
+		} catch (SQLException ex) {
+			
+			System.out.println(ex.getErrorCode());
+			return ex.getErrorCode();
+			
+		}
+	}
 }

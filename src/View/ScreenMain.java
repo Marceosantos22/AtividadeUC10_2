@@ -4,33 +4,26 @@ import java.awt.Color;
 import javax.swing.BorderFactory;
 import Data.CadastroFilmesDAO;
 import Data.CadastroFilmes;
-import java.awt.HeadlessException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import java.util.Date;
-import java.time.format.DateTimeFormatter;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
-
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableRowSorter;
 
 public class ScreenMain extends javax.swing.JFrame {
 
-	private final String[] tableColumns = {"Id","Nome do Filme", "Data de Lançamento", "Categoria"};
-//
-	private final DefaultTableModel tableModel = new DefaultTableModel(tableColumns, 0);
-
-	
-//
-	private List<CadastroFilmes> filmesList = new ArrayList<>();
+	private DefaultTableModel tabelaFilmes;
 
 	public ScreenMain() {
 
 		initComponents();
+		this.addTabela("");
 		setLocationRelativeTo(null);
 		jtSubTitle_CadastroDeFilmes.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0,
 				  Color.BLACK));
@@ -38,6 +31,15 @@ public class ScreenMain extends javax.swing.JFrame {
 
 		bntAlterar.setEnabled(false);
 		bntExcluir.setEnabled(false);
+
+		jTableFilmes.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+			public void valueChanged(ListSelectionEvent event) {
+				if (!event.getValueIsAdjusting()) {
+					selecaotabela();
+				}
+			}
+		});
 
 	}
 
@@ -108,11 +110,6 @@ public class ScreenMain extends javax.swing.JFrame {
 
       txtNomeFilme.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
       txtNomeFilme.setToolTipText("Informe o Nome do Filme");
-      txtNomeFilme.addActionListener(new java.awt.event.ActionListener() {
-         public void actionPerformed(java.awt.event.ActionEvent evt) {
-            txtNomeFilmeActionPerformed(evt);
-         }
-      });
 
       try {
          fTxtDataLancamento.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
@@ -131,9 +128,9 @@ public class ScreenMain extends javax.swing.JFrame {
 
       txtFiltro.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
       txtFiltro.setToolTipText("Digite a Categoria que deseja pesquisa");
-      txtFiltro.addActionListener(new java.awt.event.ActionListener() {
-         public void actionPerformed(java.awt.event.ActionEvent evt) {
-            txtFiltroActionPerformed(evt);
+      txtFiltro.addCaretListener(new javax.swing.event.CaretListener() {
+         public void caretUpdate(javax.swing.event.CaretEvent evt) {
+            txtFiltroCaretUpdate(evt);
          }
       });
 
@@ -277,7 +274,7 @@ public class ScreenMain extends javax.swing.JFrame {
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                .addComponent(jScrollPane1)
                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addContainerGap(55, Short.MAX_VALUE))
+            .addContainerGap(29, Short.MAX_VALUE))
       );
       layout.setVerticalGroup(
          layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -292,6 +289,40 @@ public class ScreenMain extends javax.swing.JFrame {
       pack();
    }// </editor-fold>//GEN-END:initComponents
 
+	private void addTabela(String categoria) {
+
+		CadastroFilmesDAO dao = new CadastroFilmesDAO();
+
+		boolean status = dao.conectar();
+
+		if (status == false) {
+
+			JOptionPane.showMessageDialog(null, "Erro de conexão ao Adicionar");
+
+		} else {
+
+			List<CadastroFilmes> listfilmes = dao.listTable(categoria);
+
+			tabelaFilmes = (DefaultTableModel) jTableFilmes.getModel();
+
+			jTableFilmes.setRowSorter(new TableRowSorter(tabelaFilmes));
+			tabelaFilmes.setNumRows(0);
+
+			SimpleDateFormat formatSaida = new SimpleDateFormat("dd/MM/yyyy");
+
+			for (CadastroFilmes filmes : listfilmes) {
+
+				Object[] obj = new Object[]{filmes.getId(), filmes.getNomeDoFilme(),
+					formatSaida.format(filmes.getDataLacamento()), filmes.getCategoria()};
+
+				tabelaFilmes.addRow(obj);
+
+			}
+
+			dao.desconectar();
+		}
+	}
+
    private void bntCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntCadastrarActionPerformed
 
 		if (!empty()) {
@@ -301,8 +332,9 @@ public class ScreenMain extends javax.swing.JFrame {
 				cadastrar();
 
 			}
-		}
 
+			limparDados();
+		}
    }//GEN-LAST:event_bntCadastrarActionPerformed
 
    private void bntLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntLimparActionPerformed
@@ -311,28 +343,55 @@ public class ScreenMain extends javax.swing.JFrame {
 
    }//GEN-LAST:event_bntLimparActionPerformed
 
-   private void txtNomeFilmeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeFilmeActionPerformed
-
-   }//GEN-LAST:event_txtNomeFilmeActionPerformed
-
-   private void txtFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFiltroActionPerformed
-		// TODO add your handling code here:
-   }//GEN-LAST:event_txtFiltroActionPerformed
-
    private void bntPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntPesquisarActionPerformed
 
-		tableModel.setRowCount(0);
-		dadospesquisa();
+		this.addTabela(txtFiltro.getText());
 
    }//GEN-LAST:event_bntPesquisarActionPerformed
 
    private void bntAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntAlterarActionPerformed
-		// TODO add your handling code here:
+
+		if (!empty()) {
+
+			if (!validacompos()) {
+
+				atualizaFilme();
+
+			}
+
+			limparDados();
+		}
+		bntCadastrar.setEnabled(true);
    }//GEN-LAST:event_bntAlterarActionPerformed
 
    private void bntExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntExcluirActionPerformed
-		// TODO add your handling code here:
+
+		int selectedRow = jTableFilmes.getSelectedRow();
+
+		if (selectedRow != -1) { // Verifica se alguma linha da tabela foi selecionada
+
+			int id = Integer.parseInt(jTableFilmes.getValueAt(selectedRow, 0).toString());
+			excluirLinha(id);
+
+			System.out.println(id);
+			System.out.println(selectedRow);
+		}
+
+		System.out.println(selectedRow);
+
+		tabelaFilmes.setNumRows(0);
+		limparDados();
+		txtNomeFilme.requestFocus();
+		bntCadastrar.setEnabled(true);
+
+
    }//GEN-LAST:event_bntExcluirActionPerformed
+
+   private void txtFiltroCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtFiltroCaretUpdate
+
+		this.addTabela(txtFiltro.getText());
+
+   }//GEN-LAST:event_txtFiltroCaretUpdate
 
 	public static void main(String args[]) {
 
@@ -394,7 +453,13 @@ public class ScreenMain extends javax.swing.JFrame {
 		txtNomeFilme.setText("");
 		fTxtDataLancamento.setText("");
 		txtCategoria.setText("");
+		txtFiltro.setText("");
 		txtNomeFilme.requestFocus();
+
+		bntAlterar.setEnabled(false);
+		bntExcluir.setEnabled(false);
+
+		this.addTabela("");
 
 	}
 
@@ -431,7 +496,7 @@ public class ScreenMain extends javax.swing.JFrame {
 
 		if (status == false) {
 
-			JOptionPane.showMessageDialog(null, "Erro de Conexão");
+			JOptionPane.showMessageDialog(null, "Erro de Conexão cód 01");
 
 		} else {
 
@@ -451,35 +516,6 @@ public class ScreenMain extends javax.swing.JFrame {
 			dao.desconectar();
 		}
 
-	}
-
-	public void dadospesquisa() {
-
-		String categoria = txtFiltro.getText();
-		CadastroFilmesDAO dao = new CadastroFilmesDAO();
-		boolean status = dao.conectar();
-
-		if (status == true) {
-
-			List<CadastroFilmes> filmesList = dao.consultar(categoria);
-
-			if (filmesList.isEmpty()) {
-
-				JOptionPane.showMessageDialog(null, "Nenhum Filme localizado");
-
-			} else {
-
-				this.filmesList = filmesList;
-				addTabela();
-			}
-
-			dao.desconectar();
-
-		} else {
-
-			JOptionPane.showMessageDialog(null, "Erro de conexão");
-
-		}
 	}
 
 	public boolean validacompos() {
@@ -517,21 +553,6 @@ public class ScreenMain extends javax.swing.JFrame {
 
 	}
 
-	private void addTabela() {
-
-		SimpleDateFormat formatSaida = new SimpleDateFormat("dd/MM/yyyy");
-		//tableModel.setRowCount(0);
-
-		for (CadastroFilmes filme : filmesList) {
-
-			Object[] data = {filme.getId(),filme.getNomeDoFilme(), formatSaida.format(filme.getDataLacamento()), filme.getCategoria()};
-			tableModel.addRow(data);
-
-		}
-
-		jTableFilmes.setModel(tableModel);
-	}
-
 	public boolean empty() {
 
 		boolean empty = true;
@@ -555,11 +576,126 @@ public class ScreenMain extends javax.swing.JFrame {
 	}
 
 	public void ocultarColuna() {
-		TableColumnModel modeloColuna = jTableFilmes.getColumnModel();
-		TableColumn colunaInvisivel = modeloColuna.getColumn(0); 
 
-		
-		colunaInvisivel.setMinWidth(0); 
+		TableColumnModel modeloColuna = jTableFilmes.getColumnModel();
+		TableColumn colunaInvisivel = modeloColuna.getColumn(0);
+
+		colunaInvisivel.setMinWidth(0);
 		colunaInvisivel.setMaxWidth(1);
+	}
+
+	public void excluirLinha(int id) {
+
+		CadastroFilmesDAO dao = new CadastroFilmesDAO();
+
+		boolean status = dao.conectar();
+
+		if (status == false) {
+
+			JOptionPane.showMessageDialog(null, "Erro de conexão");
+
+		} else {
+
+			status = dao.excluir(id);
+
+			if (status == true) {
+
+				JOptionPane.showMessageDialog(null, "Funcionário excluído com sucesso!");
+
+			} else {
+
+				JOptionPane.showMessageDialog(null, "Erro na exclusão do funcionário!");
+
+			}
+			dao.desconectar();
+		}
+	}
+
+	public void selecaotabela() {
+
+		int selectedRow = jTableFilmes.getSelectedRow();
+
+		if (selectedRow != -1) {
+
+			int id = Integer.parseInt(jTableFilmes.getValueAt(selectedRow, 0).toString());
+			String nome = jTableFilmes.getValueAt(selectedRow, 1).toString();
+			String dataStr = jTableFilmes.getValueAt(selectedRow, 2).toString();
+			String categoria = jTableFilmes.getValueAt(selectedRow, 3).toString();
+
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+			Date data = null;
+
+			try {
+
+				data = dateFormat.parse(dataStr);
+
+			} catch (ParseException ex) {
+
+				System.out.println("Erro dados seleção" + ex.getMessage());
+
+			}
+
+			txtNomeFilme.setText(nome);
+			txtCategoria.setText(categoria);
+			fTxtDataLancamento.setText(dateFormat.format(data));
+			//txtId.setText(String.valueOf(id));
+
+			bntAlterar.setEnabled(true);
+			bntExcluir.setEnabled(true);
+			bntCadastrar.setEnabled(false);
+		}
+	}
+
+	public void atualizaFilme() {
+
+		CadastroFilmes cadastroFilmes = new CadastroFilmes();
+		CadastroFilmesDAO dao;
+
+		int selectedRow = jTableFilmes.getSelectedRow();
+
+		boolean status;
+		int resposta;
+
+		if (selectedRow != -1) {
+
+			int id = Integer.parseInt(jTableFilmes.getValueAt(selectedRow, 0).toString());
+			cadastroFilmes.setId(id);
+
+			if (!empty() && !validacompos()) {
+				cadastroFilmes.setNomeDoFilme(txtNomeFilme.getText());
+
+				String dataString = fTxtDataLancamento.getText();
+				SimpleDateFormat formatEntrada = new SimpleDateFormat("dd/MM/yyyy");
+				Date dataFormatada = null;
+
+				try {
+					dataFormatada = formatEntrada.parse(dataString);
+				} catch (ParseException ex) {
+					System.out.println("Erro na conversão da Data" + ex.getMessage());
+				}
+				cadastroFilmes.setDataLacamento(dataFormatada);
+
+				cadastroFilmes.setCategoria(txtCategoria.getText());
+
+				dao = new CadastroFilmesDAO();
+
+				status = dao.conectar();
+
+				if (status == false) {
+					JOptionPane.showMessageDialog(null, "Erro de Conexão");
+				} else {
+					resposta = dao.atualizar(cadastroFilmes);
+
+					if (resposta == 1) {
+						JOptionPane.showMessageDialog(null, "Filme atualizado com sucesso!");
+						limparDados();
+						txtNomeFilme.requestFocus();
+					} else {
+						JOptionPane.showMessageDialog(null, "Erro ao atualizar");
+					}
+				}
+				dao.desconectar();
+			}
+		}
 	}
 }

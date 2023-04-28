@@ -33,7 +33,7 @@
                   <Component id="jScrollPane1" max="32767" attributes="0"/>
                   <Component id="jPanel1" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace pref="55" max="32767" attributes="0"/>
+              <EmptySpace pref="29" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -245,9 +245,6 @@
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Informe o Nome do Filme"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtNomeFilmeActionPerformed"/>
-          </Events>
         </Component>
         <Component class="javax.swing.JFormattedTextField" name="fTxtDataLancamento">
           <Properties>
@@ -285,7 +282,7 @@
             <Property name="toolTipText" type="java.lang.String" value="Digite a Categoria que deseja pesquisa"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtFiltroActionPerformed"/>
+            <EventHandler event="caretUpdate" listener="javax.swing.event.CaretListener" parameters="javax.swing.event.CaretEvent" handler="txtFiltroCaretUpdate"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="bntPesquisar">
