@@ -28,7 +28,7 @@ CREATE TABLE `filmes` (
   `datalancamento` date NOT NULL,
   `categoria` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=42 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -37,7 +37,7 @@ CREATE TABLE `filmes` (
 
 LOCK TABLES `filmes` WRITE;
 /*!40000 ALTER TABLE `filmes` DISABLE KEYS */;
-INSERT INTO `filmes` VALUES (1,'Super Mario Bros. - O Filme','2023-04-06',' Ação, Aventura, Animação'),(2,'Os Três Mosqueteiros: D’Artagnan','2023-04-20','Aventura, Histórico'),(3,'Luther: O Cair da Noite','2023-03-10','Drama, Crime, Policial'),(4,'Bad Boys III para Sempre','2020-01-30','Ação, Comédia');
+INSERT INTO `filmes` VALUES (33,'Hocus Pocus 2','2022-09-30','Comédia , Família , Fantasia'),(34,'Star Wars: Rogue Squadron','2023-12-23','Ficção Científica'),(35,'Night at the Museum: Kahmunrah Rises Again','2022-12-09','Aventura , Comédia'),(36,'Black Panther: Wakanda Forever','2022-11-10','Aventura , Ação'),(37,'Thor: Love and Thunder','2022-07-07','Aventura , Ação , Fantasia'),(38,'Cheaper by the Dozen (12 é Demais)','2022-03-18','Comédia , Família'),(39,'Turner & Hooch','1989-07-28','Comédia'),(40,'Bad Boys Para Sempre','2020-01-30','Suspense, Ação, Crime, Comédia'),(41,'Super Mario Bros: O Filme.','2023-04-06','Desenho');
 /*!40000 ALTER TABLE `filmes` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -50,4 +50,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-04-15 14:10:04
+-- Dump completed on 2023-04-28 15:34:15

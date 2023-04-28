@@ -18,6 +18,8 @@ import javax.swing.table.TableRowSorter;
 
 public class ScreenMain extends javax.swing.JFrame {
 
+	/**Representa o modelo da tabela de filmes utilizada na interface gráfica.
+	 */
 	private DefaultTableModel tabelaFilmes;
 
 	public ScreenMain() {
@@ -32,6 +34,9 @@ public class ScreenMain extends javax.swing.JFrame {
 		bntAlterar.setEnabled(false);
 		bntExcluir.setEnabled(false);
 
+		/**Adiciona um ListSelectionListener à tabela jTableFilmes para capturar a seleção
+		 * do usuário e chama o método selecaotabela() quando uma linha é selecionada.
+		 */
 		jTableFilmes.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
 			public void valueChanged(ListSelectionEvent event) {
@@ -288,7 +293,12 @@ public class ScreenMain extends javax.swing.JFrame {
 
       pack();
    }// </editor-fold>//GEN-END:initComponents
-
+	
+	/**Adiciona as informações dos filmes cadastrados no banco de dados em uma tabela,
+	 * filtrando por categoria se informado, utilizando o método listTable() da classe CadastroFilmesDAO.
+	 * Se ocorrer erro de conexão com o banco, uma mensagem de erro é exibida.
+	 * @param categoria 
+	 */
 	private void addTabela(String categoria) {
 
 		CadastroFilmesDAO dao = new CadastroFilmesDAO();
@@ -297,7 +307,7 @@ public class ScreenMain extends javax.swing.JFrame {
 
 		if (status == false) {
 
-			JOptionPane.showMessageDialog(null, "Erro de conexão ao Adicionar");
+			JOptionPane.showMessageDialog(null, "Não foi possível Adicionar, Erro de conexão");
 
 		} else {
 
@@ -323,6 +333,12 @@ public class ScreenMain extends javax.swing.JFrame {
 		}
 	}
 
+	/**Realiza o cadastro de um novo filme ao clicar no botão "Cadastrar".
+	 * Verifica se os campos estão preenchidos corretamente e se já não existe 
+	 * um filme com o mesmo nome cadastrado. Caso todas as condições sejam satisfeitas, 
+	 * realiza a inserção do filme no banco de dados, exibindo uma mensagem de sucesso. 
+	 * Caso contrário, exibe uma mensagem de erro. 
+	 */	
    private void bntCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntCadastrarActionPerformed
 
 		if (!empty()) {
@@ -343,12 +359,24 @@ public class ScreenMain extends javax.swing.JFrame {
 
    }//GEN-LAST:event_bntLimparActionPerformed
 
+	/**Realiza a pesquisa na tabela de filmes, filtrando pelo nome ou categoria do filme.
+	 * Chama o método addTabela() passando como parâmetro o texto digitado no campo txtFiltro.
+	 * @param evt 
+	 */
    private void bntPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntPesquisarActionPerformed
 
 		this.addTabela(txtFiltro.getText());
 
    }//GEN-LAST:event_bntPesquisarActionPerformed
 
+	/**Realiza a atualização de um filme no banco de dados, utilizando as informações
+	 * preenchidas nos campos de texto.
+	 * Apos chama a classe CadastroFilmesDAO enviado para método atualizar() e executar no BD.
+	 * Caso ocorra sucesso, exibe uma mensagem de confirmação e limpa os dados do formulário.
+	 * Caso contrário, exibe uma mensagem de erro.
+	 * O botão cadastrar é habilitado após a atualização.
+	 * @param evt 
+	 */
    private void bntAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntAlterarActionPerformed
 
 		if (!empty()) {
@@ -363,7 +391,11 @@ public class ScreenMain extends javax.swing.JFrame {
 		}
 		bntCadastrar.setEnabled(true);
    }//GEN-LAST:event_bntAlterarActionPerformed
-
+	
+	/**Remove a linha selecionada na tabela de filmes e limpa os campos de texto e a seleção de linha.
+	 * Se nenhuma linha for selecionada, não faz nada.
+	 * @param evt 
+	 */
    private void bntExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bntExcluirActionPerformed
 
 		int selectedRow = jTableFilmes.getSelectedRow();
@@ -386,7 +418,11 @@ public class ScreenMain extends javax.swing.JFrame {
 
 
    }//GEN-LAST:event_bntExcluirActionPerformed
-
+	
+	/**Atualiza a tabela de filmes exibida de acordo com o texto de filtro inserido no campo de filtro.
+	 * O método chama o método addTabela() passando o texto do campo de filtro como parâmetro.
+	 * @param evt um evento CaretEvent que ocorre quando o cursor é movido dentro do JTextComponent.
+	 */	 
    private void txtFiltroCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtFiltroCaretUpdate
 
 		this.addTabela(txtFiltro.getText());
@@ -448,6 +484,9 @@ public class ScreenMain extends javax.swing.JFrame {
    private javax.swing.JTextField txtNomeFilme;
    // End of variables declaration//GEN-END:variables
 
+	/**Limpa os dados preenchidos nos campos de texto e desabilita os botões de alteração e exclusão. 
+	 * Também chama o método addTabela() para atualizar a tabela de filmes com os dados do banco de dados.
+	 */
 	public void limparDados() {
 
 		txtNomeFilme.setText("");
@@ -463,6 +502,10 @@ public class ScreenMain extends javax.swing.JFrame {
 
 	}
 
+	/**Realiza o cadastro de um filme no banco de dados, utilizando as informações
+	 * preenchidas nos campos de texto.
+	 * Apos chamada a classe CadastroFilmesDAO com o  método salvar() para  executar no BD a inclusão.
+	 */
 	public void cadastrar() {
 
 		CadastroFilmes cadastro = new CadastroFilmes();
@@ -496,7 +539,7 @@ public class ScreenMain extends javax.swing.JFrame {
 
 		if (status == false) {
 
-			JOptionPane.showMessageDialog(null, "Erro de Conexão cód 01");
+			JOptionPane.showMessageDialog(null, "Erro de Conexão com o BD");
 
 		} else {
 
@@ -510,14 +553,17 @@ public class ScreenMain extends javax.swing.JFrame {
 
 			} else {
 
-				JOptionPane.showMessageDialog(null, "Erro ao Salvar");
+				JOptionPane.showMessageDialog(null, "Erro ao Salvar, verifique os dados digitados!");
 			}
 
 			dao.desconectar();
 		}
 
 	}
-
+	
+	/**Verifica se os campos do formulário de cadastro de filmes estão preenchidos corretamente.
+	 * @return true se os campos estiverem preenchidos corretamente, caso contrário retorna false.
+	 */
 	public boolean validacompos() {
 
 		boolean validacao = true;
@@ -552,7 +598,10 @@ public class ScreenMain extends javax.swing.JFrame {
 		return validacao;
 
 	}
-
+	
+	/**Verifica se os campos de Nome do Filme e Categoria do Filme estão vazios.
+	 * @return true se os campos estiverem vazios, false caso contrário
+	 */
 	public boolean empty() {
 
 		boolean empty = true;
@@ -574,7 +623,10 @@ public class ScreenMain extends javax.swing.JFrame {
 		return empty;
 
 	}
-
+	
+	/**Método para ocultar a primeira coluna da tabela de filmes
+	 * deixando apenas visivel para usuário o que é de interesse do mesmo.
+	 */
 	public void ocultarColuna() {
 
 		TableColumnModel modeloColuna = jTableFilmes.getColumnModel();
@@ -583,7 +635,10 @@ public class ScreenMain extends javax.swing.JFrame {
 		colunaInvisivel.setMinWidth(0);
 		colunaInvisivel.setMaxWidth(1);
 	}
-
+	
+	/**Exclui um registro de filme com base no ID informado.
+	 * @param id 
+	 */
 	public void excluirLinha(int id) {
 
 		CadastroFilmesDAO dao = new CadastroFilmesDAO();
@@ -592,7 +647,7 @@ public class ScreenMain extends javax.swing.JFrame {
 
 		if (status == false) {
 
-			JOptionPane.showMessageDialog(null, "Erro de conexão");
+			JOptionPane.showMessageDialog(null, "Erro de Conexão com o BD");
 
 		} else {
 
@@ -611,6 +666,10 @@ public class ScreenMain extends javax.swing.JFrame {
 		}
 	}
 
+	/**
+	 * Seleciona um registro da tabela de filmes e preenche os campos de texto correspondentes
+	 * com os dados do registro selecionado.
+	 */
 	public void selecaotabela() {
 
 		int selectedRow = jTableFilmes.getSelectedRow();
@@ -646,6 +705,11 @@ public class ScreenMain extends javax.swing.JFrame {
 		}
 	}
 
+	/**
+	 * Método para Atualizar um filme no Banco de Dados com base nos dados inseridos pelo usuário
+	 * e após validação dos dados é chamando o Método atualizar() da classe DAO e enviado o objeto
+	 * cadastroFilmes.
+	 */
 	public void atualizaFilme() {
 
 		CadastroFilmes cadastroFilmes = new CadastroFilmes();
@@ -682,7 +746,7 @@ public class ScreenMain extends javax.swing.JFrame {
 				status = dao.conectar();
 
 				if (status == false) {
-					JOptionPane.showMessageDialog(null, "Erro de Conexão");
+					JOptionPane.showMessageDialog(null, "Erro de Conexão com o BD");
 				} else {
 					resposta = dao.atualizar(cadastroFilmes);
 
@@ -691,7 +755,7 @@ public class ScreenMain extends javax.swing.JFrame {
 						limparDados();
 						txtNomeFilme.requestFocus();
 					} else {
-						JOptionPane.showMessageDialog(null, "Erro ao atualizar");
+						JOptionPane.showMessageDialog(null, "Erro ao atualizar, verifique os dados digitados!");
 					}
 				}
 				dao.desconectar();

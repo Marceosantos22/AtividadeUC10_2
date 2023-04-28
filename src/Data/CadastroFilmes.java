@@ -3,6 +3,9 @@ package Data;
 
 import java.util.Date;
 
+/**Construtor padrão da classe CadastroFilmes.
+ * @author Marcelo Oliveira
+ */
 public class CadastroFilmes {
 	
 	private int id;
@@ -10,11 +13,16 @@ public class CadastroFilmes {
 	private Date dataLacamento;
 	private String categoria;
 	
-
+	
 	public CadastroFilmes() {
 
 	}
-
+	/**Construtor com parâmetros da classe CadastroFilmes.
+	 * @param id
+	 * @param nomeDoFilme
+	 * @param dataLacamento
+	 * @param categoria 
+	 */
 	public CadastroFilmes(int id, String nomeDoFilme, Date dataLacamento, String categoria) {
 		this.id = id;
 		this.nomeDoFilme = nomeDoFilme;

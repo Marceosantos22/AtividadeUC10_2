@@ -11,12 +11,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**Classe responsável por gerenciar a conexão com o banco de dados e executar operações no 
+ * banco de dados relacionadas à tabela de filmes. * 
+ * @author Marcelo Oliveira
+ */
 public class CadastroFilmesDAO {
 
 	Connection conn;
 	PreparedStatement st;
 	ResultSet rs;
 
+	
+	/**Conecta-se ao banco de dados.
+	 * @return true se a conexão for bem sucedida, false caso contrário.
+	 */
 	public boolean conectar() {
 		try {
 
@@ -34,6 +42,9 @@ public class CadastroFilmesDAO {
 
 	}
 
+	/**
+	 * Desconecta-se do banco de dados.
+	 */
 	public void desconectar() {
 		try {
 
@@ -45,6 +56,10 @@ public class CadastroFilmesDAO {
 
 	}
 
+	/**Salva um objeto CadastroFilmes no banco de dados.
+	* @param cadastroFilmes o objeto a ser salvo.
+	* @return o status da operação de salvamento.	 
+	*/
 	public int salvar(CadastroFilmes cadastroFilmes) {
 
 		int status;
@@ -67,6 +82,11 @@ public class CadastroFilmesDAO {
 		}
 	}
 
+	/**Lista os filmes do banco de dados.
+	 * @param Categoria uma string que representa a categoria de filmes
+	 * a serem listados. Se estiver vazio, todos os filmes serão listados.
+	 * @return uma lista de objetos CadastroFilmes.
+	 */
 	public List<CadastroFilmes> listTable(String Categoria) {
 
 		String sql = "SELECT * FROM filmes";
@@ -107,15 +127,18 @@ public class CadastroFilmesDAO {
 
 			return lista;
 
-		} catch (SQLException | ParseException ex) {
+			} catch (SQLException | ParseException ex) {
 
-			System.out.println("Erro ao pesquisar: " + ex.getMessage());
+				System.out.println("Erro ao pesquisar: " + ex.getMessage());
 
-			return null;
-		}
+				return null;
+			}
 
 	}
-
+	/**Método para excluir um registro do banco de dados
+	 * @param id
+	 * @return o status da operação de exclusão.
+	 */
 	public boolean excluir(int id) {
 
 		try {
@@ -133,7 +156,11 @@ public class CadastroFilmesDAO {
 		}
 
 	}
-
+	/**Método responsável por atualizar os dados de um filme no banco de dados.
+	 * Recebe como parâmetro um objeto CadastroFilmes contendo os novos dados do filme.
+	 * @param cadastroFilmes
+	 * @return Retorna o número de linhas afetadas pela operação ou o código de erro caso ocorra uma exceção SQL.
+	 */
 	public int atualizar(CadastroFilmes cadastroFilmes) {
 		
 		int status;
