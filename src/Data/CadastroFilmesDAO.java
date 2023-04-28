@@ -21,7 +21,7 @@ public class CadastroFilmesDAO {
 		try {
 
 			Class.forName("com.mysql.cj.jdbc.Driver");
-			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/cenaflix", "root", "F17101818@");
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/cenaflix", "root", "");
 
 			return true;
 
